@@ -116,6 +116,11 @@ tj.listen(function(msg) {
                     color = entity.value;
                 }
             }
+
+            if (intent == 'recognize' && config.hasCamera == false) {
+               //no camera configured, we can not see anything
+               response.description = "Sorry, but I think I am blind today.";
+            }
  
             tj.speak(response.description);
 
@@ -138,9 +143,10 @@ tj.listen(function(msg) {
 		tj.wave();
             }
 
-            if (intent == 'recognize') {
+            if (intent == 'recognize' && config.hasCamera == true) {
 
                 console.log("RECOGNIZE");
+
 		resumeWhenDone = false;
 
 		tj.see().then(function(result) {
@@ -178,7 +184,6 @@ tj.listen(function(msg) {
 	   	    console.log(">>> Start listening");
 
 		});
-
             }
 
    	    if (resumeWhenDone) {

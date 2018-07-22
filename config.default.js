@@ -6,7 +6,8 @@
 *  Your password is the smaller value: 12 characters
 */
 
-exports.workspaceId = ''; // replace with the workspace identifier of your conversation
+// replace with the workspace identifier of your Watson Assistant workspace
+exports.workspaceId = ''; 
 
 // Set this to false if your TJBot does not have a camera.
 exports.hasCamera = true;
@@ -14,29 +15,32 @@ exports.hasCamera = true;
 // Create the credentials object for export
 exports.credentials = {};
 
-// Watson Assistant
+// Watson Assistant Service Credentials
 // https://www.ibm.com/watson/services/conversation/
-exports.credentials.assistant = {
-	password: '',
-	username: ''
+exports.credentials.conversation = {
+	username: '',
+	password: ''
 };
 
-// Watson Speech to Text
+// Watson Speech to Text Service Credentials
 // https://www.ibm.com/watson/services/speech-to-text/
 exports.credentials.speech_to_text = {
-	password: '',
-	username: ''
+	username: '',
+	password: ''
 };
 
-// Watson Text to Speech
+
+// Watson Text to Speech Service Credentials
 // https://www.ibm.com/watson/services/text-to-speech/
 exports.credentials.text_to_speech = {
-	password: '',
-	username: ''
+	username: '',
+	password: ''
 };
 
-// Watson Visual Recognition
+
+// Watson Visual Recognition Service Credentials
 // https://www.ibm.com/watson/services/visual-recognition/
 exports.credentials.visual_recognition = {
-    api_key: ''
+	api_key: '',
+	iam_apikey: ''
 };

@@ -54,7 +54,7 @@ Make a copy the default configuration file and update it with the Watson service
 
     $ cp config.default.js config.js
     $ nano config.js
-    <enter your credentials and the conversation workspace ID in the specified places>
+    <enter your service credentials and the conversation workspace ID in the specified places>
 
 ### Run!
 
