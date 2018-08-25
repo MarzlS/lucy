@@ -73,24 +73,13 @@ console.log("Try saying, \"" + tj.configuration.robot.name + ", please introduce
 console.log("You can also say, \"" + tj.configuration.robot.name + ", tell me a joke!\"");
 
 console.log(">>> Start listening");
+
 // listen for utterances with our attentionWord and send the result to
 // the Assistant service
-tj.listen(function(msg) {
-    // check to see if they are talking to TJBot
-    var containsName = msg.indexOf(tj.configuration.robot.name) >= 0
-	|| msg.indexOf("you see") >= 0
-	|| msg.indexOf("he knew") >= 0
-	|| msg.indexOf("Lou") >= 0
-	|| msg.indexOf("to you") >= 0
-	|| msg.indexOf("does it") >= 0
-	|| msg.indexOf("Rosie") >= 0
-	|| msg.indexOf("you he") >= 0 
-	|| msg.indexOf("who he") >= 0 
-	|| msg.indexOf("no he") >= 0 
-	|| msg.indexOf("movie") >= 0 
-	|| msg.indexOf("Newfie") >= 0;
 
-   if (containsName) {
+tj.listen(function(msg) {
+
+   if (isTalkingToBot(msg)) {
 
 	tj.pauseListening();
 	var resumeWhenDone = true;
@@ -120,6 +109,12 @@ tj.listen(function(msg) {
             if (intent == 'recognize' && config.hasCamera == false) {
                //no camera configured, we can not see anything
                response.description = "Sorry, but I think I am blind today.";
+            }
+
+            if (intent == 'insult') {
+                //give an angry answer if we have been insulted  
+                tj.shine('red');
+                response.description = "<prosody pitch='-200Hz' rate='-10%'>" + response.description + "</prosody>"
             }
  
             tj.speak(response.description);
@@ -208,5 +203,22 @@ function discoParty() {
             tj.shine(randColor);
         }, i * 250);
     }
+};
+
+// check to see if user is talking to Lucy
+function isTalkingToBot(msg) {
+    var containsName = msg.indexOf(tj.configuration.robot.name) >= 0
+	|| msg.indexOf("you see") >= 0
+	|| msg.indexOf("he knew") >= 0
+	|| msg.indexOf("Lou") >= 0
+	|| msg.indexOf("to you") >= 0
+	|| msg.indexOf("does it") >= 0
+	|| msg.indexOf("Rosie") >= 0
+	|| msg.indexOf("you he") >= 0 
+	|| msg.indexOf("who he") >= 0 
+	|| msg.indexOf("no he") >= 0 
+	|| msg.indexOf("movie") >= 0 
+	|| msg.indexOf("Newfie") >= 0;
+    return containsName;
 };
 
