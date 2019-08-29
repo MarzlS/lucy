@@ -30,31 +30,7 @@ if (config.hasCamera == false) {
 }
 
 // set up TJBot's configuration
-var tjConfig = {
-    log: {
-        level: 'verbose'
-    },
-    robot: {
-        gender: 'female', // see TJBot.prototype.genders
-        name: 'Lucy'
-    },
-    speak: {
-        voice: 'en-US_AllisonVoice',
-        speakerDeviceId: 'plughw:1,0'
-    },
-    see: {
-        confidenceThreshold: {
-            object: 0.5,
-            text: 0.1
-        },
-        camera: {
-            height: 720,
-            width: 960,
-            verticalFlip: true, // flips the image vertically, may need to set to 'true' if the camera is installed upside-down
-            horizontalFlip: true // flips the image horizontally, should not need to be overridden
-        }
-    }
-};
+var tjConfig = config.tjConfig;
 
 // instantiate our TJBot!
 var tj = new TJBot(hardware, tjConfig, credentials);
@@ -68,9 +44,9 @@ tjColors.forEach(function(color) {
     colors[color] = 1;
 });
 
-console.log("You can ask me to introduce myself or tell you a joke.");
-console.log("Try saying, \"" + tj.configuration.robot.name + ", please introduce yourself\" or \"" + tj.configuration.robot.name + ", what can you do?\"");
-console.log("You can also say, \"" + tj.configuration.robot.name + ", tell me a joke!\"");
+console.log("\nHello I am " + tj.configuration.robot.name + "!");
+console.log("Try saying, \"" + tj.configuration.robot.name + ", change your light to blue\" (or any other color) or \"" + tj.configuration.robot.name + ", what can you do?\"");
+console.log("You can also say, \"" + tj.configuration.robot.name + ", tell me a joke!\" or \"" + tj.configuration.robot.name + ", tell me a poem!\"\n");
 
 console.log(">>> Start listening");
 
@@ -218,6 +194,7 @@ function isTalkingToBot(msg) {
 	|| msg.indexOf("who he") >= 0 
 	|| msg.indexOf("no he") >= 0 
 	|| msg.indexOf("movie") >= 0 
+	|| msg.indexOf("Losey") >= 0 
 	|| msg.indexOf("Newfie") >= 0;
     return containsName;
 };
