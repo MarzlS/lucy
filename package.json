@@ -1,26 +1,26 @@
 {
-  "name": "conversation",
-  "description": "TJBot conversation recipe",
+  "name": "lucy",
+  "description": "Lucy a TJBot variation",
   "version": "0.0.1",
-  "author": "TJBot <tjbot@us.ibm.com>",
+  "author": "Marcell Streile <mstreile@gmx.de>",
   "bugs": {
-    "url": "https://github.com/ibmtjbot/tjbot/issues"
+    "url": "https://github.com/MarzlS/lucy/issues"
   },
   "dependencies": {
     "tjbot": "latest"
   },
-  "main": "conversation.js",
-  "homepage": "https://github.com/ibmtjbot/tjbot/tree/master/recipes/conversation",
+  "main": "lucy.js",
+  "homepage": "https://github.com/MarzlS/lucy",
   "keywords": [
     "tjbot"
   ],
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "git@github.com:ibmtjbot/tjbot.git"
+    "url": "https://github.com/MarzlS/lucy.git"
   },
   "scripts": {
-    "start": "node conversation.js",
+    "start": "sudo node lucy.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   }
 }

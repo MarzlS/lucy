@@ -16,6 +16,7 @@
 
 var TJBot = require('tjbot');
 var config = require('./config');
+var i18n = require('./i18n');
 
 // obtain our credentials from config.js
 var credentials = config.credentials;
@@ -23,32 +24,32 @@ var credentials = config.credentials;
 // obtain user-specific config
 var WORKSPACEID = config.workspaceId;
 
-// these are the hardware capabilities that TJ needs for this recipe
+// these are the hardware capabilities that this recipe needs
 var hardware = ['microphone', 'speaker', 'led', 'servo', 'camera'];
 if (config.hasCamera == false) {
     hardware = ['microphone', 'speaker', 'led', 'servo'];
 }
 
-// set up TJBot's configuration
+// set up the bot configuration
 var tjConfig = config.tjConfig;
 
-// instantiate our TJBot!
+// instantiate our TJBot
 var tj = new TJBot(hardware, tjConfig, credentials);
 
-// full list of colors that TJ recognizes, e.g. ['red', 'green', 'blue']
+// full list of colors that the bot recognizes, e.g. ['red', 'green', 'blue']
 var tjColors = tj.shineColors();
 
-// hash map to easily test if TJ understands a color, e.g. {'red': 1, 'green': $
+// hash map to easily test if TJ understands a color, e.g. {'red': 1, 'blue': 1, ...}
 var colors = {};
 tjColors.forEach(function(color) {
     colors[color] = 1;
 });
 
-console.log("\nHello I am " + tj.configuration.robot.name + "!");
-console.log("Try saying, \"" + tj.configuration.robot.name + ", change your light to blue\" (or any other color) or \"" + tj.configuration.robot.name + ", what can you do?\"");
-console.log("You can also say, \"" + tj.configuration.robot.name + ", tell me a joke!\" or \"" + tj.configuration.robot.name + ", tell me a poem!\"\n");
+console.log(i18n.console.welcome.replace(/%name%/gi, tj.configuration.robot.name));
+console.log(i18n.console.info1.replace(/%name%/gi, tj.configuration.robot.name));
+console.log(i18n.console.info2.replace(/%name%/gi, tj.configuration.robot.name));
 
-console.log(">>> Start listening");
+console.log(i18n.console.listening);
 
 // listen for utterances with our attentionWord and send the result to
 // the Assistant service
@@ -84,7 +85,7 @@ tj.listen(function(msg) {
 
             if (intent == 'recognize' && config.hasCamera == false) {
                //no camera configured, we can not see anything
-               response.description = "Sorry, but I think I am blind today.";
+               response.description = i18n.responses.nocamera;
             }
 
             if (intent == 'insult') {
@@ -96,7 +97,12 @@ tj.listen(function(msg) {
             tj.speak(response.description);
 
             if (intent == 'change_light' && color != '') {
-                tj.shine(color);
+                var tjColor = i18n.color[color];
+                if (tjColor) {
+                    tj.shine(tjColor);
+                } else {
+                    console.log("Color not in translation: " + color);
+                }
             }
                   
             if (intent == 'goodbye') {
@@ -144,22 +150,22 @@ tj.listen(function(msg) {
                     //console.log("SEE COLOR: " + color);
 
 		    if (whatisee)
-		    	tj.speak("This is a " + whatisee);
+		    	tj.speak(i18n.responses.whatisee + whatisee);
 		    else
-			tj.speak("Sorry, I don't know what this is.");
+			tj.speak(i18n.responses.noidea);
 
 		    if (colorScore > 0)
 		    	tj.shine(color);
 
 		    tj.resumeListening();
-	   	    console.log(">>> Start listening");
+	   	    console.log(i18n.console.listening);
 
 		});
             }
 
    	    if (resumeWhenDone) {
   	        tj.resumeListening();
-	        console.log(">>> Start listening");
+	        console.log(i18n.console.listening);
 	    }
 
         });
@@ -181,9 +187,9 @@ function discoParty() {
     }
 };
 
-// check to see if user is talking to Lucy
+// check to see if user is talking to bot
 function isTalkingToBot(msg) {
-    var containsName = msg.indexOf(tj.configuration.robot.name) >= 0
+    var containsName = msg.indexOf(tj.configuration.robot.name.toLowerCase()) >= 0
 	|| msg.indexOf("you see") >= 0
 	|| msg.indexOf("he knew") >= 0
 	|| msg.indexOf("Lou") >= 0
