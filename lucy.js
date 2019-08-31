@@ -189,19 +189,12 @@ function discoParty() {
 
 // check to see if user is talking to bot
 function isTalkingToBot(msg) {
-    var containsName = msg.indexOf(tj.configuration.robot.name.toLowerCase()) >= 0
-	|| msg.indexOf("you see") >= 0
-	|| msg.indexOf("he knew") >= 0
-	|| msg.indexOf("Lou") >= 0
-	|| msg.indexOf("to you") >= 0
-	|| msg.indexOf("does it") >= 0
-	|| msg.indexOf("Rosie") >= 0
-	|| msg.indexOf("you he") >= 0 
-	|| msg.indexOf("who he") >= 0 
-	|| msg.indexOf("no he") >= 0 
-	|| msg.indexOf("movie") >= 0 
-	|| msg.indexOf("Losey") >= 0 
-	|| msg.indexOf("Newfie") >= 0;
-    return containsName;
+    var test = msg.toLowerCase();
+    for (var i in config.nameVariants) {
+        var value = config.nameVariants[i];
+        if (test.indexOf(value.toLowerCase()) >= 0)
+            return true;
+    };
+    return false;
 };
 

@@ -39,6 +39,9 @@ exports.tjConfig = {
     }
 };
 
+// All possible name variants we should listen to
+exports.nameVariants = [exports.tjConfig.robot.name, "you see", "Lou", "to you", "does it", "Rosie", "you he", "who he", "no he", "movie", "Losey", "Newfie"];
+
 // Create the credentials object for export
 exports.credentials = {};
 
