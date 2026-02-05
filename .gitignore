@@ -63,3 +63,4 @@ typings/
 # configuration
 config.js
 README_LUCY.txt
+package-lock.json

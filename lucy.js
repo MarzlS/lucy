@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-var TJBot = require('tjbot');
+var TJBot = require('tjbot').default;
 var config = require('./config');
 var i18n = require('./i18n');
 
