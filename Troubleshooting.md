@@ -22,7 +22,8 @@ sudo sh bootstrap.sh
 
 Select Options:
 
-> Would you like to use this Raspberry Pi for TJBot? [Y/n] Y
+```
+> Would you like to use this Raspberry Pi for Lucy? [Y/n] Y
 > ...
 > TJBot name (current: raspberrypi): lucy
 > Setting DNS hostname to lucy
@@ -40,7 +41,7 @@ Select Options:
 > ... To be continued
 > ...
 > ...
-
+```
 
 ## Prerequisites
 
@@ -48,31 +49,38 @@ Select Options:
 
 Headjack may not be  blacklisted otherwise the USB Soundcard does not work.
 
-Delete blacklist:
+You may want to delete the blacklist:
+
     $ rm /etc/modprobe.d/*-blacklist-snd.conf
 
-Speaker Config using the USB soundcard:
+Reboot after making any changes to `modprobe.d`.
 
+Speaker Config for Lucy using a USB soundcard:
+
+```
 var tj = new TJBot(['speaker'], {log: {level: 'debug'}, speak: {speakerDeviceId: "plughw:1,0"}}, {});
+```
 
 ### LED
 
-To use the LED Audio should be blacklisted, but not all modules!
+To use the LED, audio should be blacklisted, but not all modules!
 
 Copy to modprobe.d:
 
-cp ./bootstrap/lucybot-blacklist-snd.conf /etc/modprobe.d/
+    $ cp ./bootstrap/lucybot-blacklist-snd.conf /etc/modprobe.d/
 
 Make sure this line is NOT in this file:
+```
 blacklist snd
+```
 
-Reboot after making any changes to modprobe.d
+Reboot after making any changes to `modprobe.d`.
 
 ### Camera
 
 The TJBot library is trying to use the Legacy Camera command (raspistill), but this tool is missing on newer Raspberry Pi OS versions.  
 The legacy camera stack has been replaced by libcamera. 
-To fix this we create a this script to simulate raspistill (old version of rpicam-still) for TJBot and Lucybot:
+To fix this we create a this script to simulate raspistill (old version of rpicam-still) for TJBot and Lucy:
 
 Check your configuration file:
 
@@ -87,6 +95,8 @@ Check your configuration file:
 # Always do --vflip for the ov5647 camera
 dtoverlay=ov5647,rotation=180
 ```
+
+Reboot after making any changes to the `config.txt`.
 
 To test the camera use stand alone:
 
@@ -129,10 +139,8 @@ exec rpicam-still "${args[@]}"
 Make script executable:
 
     $ sudo chmod +x /usr/bin/raspistill
-
-
-
-## Tests
+    
+# Tests
 
 Run all tests with Node 18 (maximum supported version)!
 
@@ -143,7 +151,7 @@ Run all tests with Node 18 (maximum supported version)!
 
     $ sudo node test.led.js
 
--> LED changes color
+**Success:** LED changes color.
 
 If using nvm to select node version you must use:
 
@@ -153,7 +161,7 @@ If using nvm to select node version you must use:
 
     $ sudo node test.servo.js
 
--> Arm should move
+**Success:** Arm should move.
 
 If using nvm to select node version you must use:
 
@@ -170,7 +178,7 @@ Fix (recommended): downgrade Node, use Node 18 LTS (most stable for pigpio) or N
 
 ## Test the camera
 
-Native testing:
+Test using libcamera:
 
     $ rpicam-hello
 
@@ -178,17 +186,16 @@ Test using Lucy:
 
     $ sudo node test.camera.js
 
--> Bild is captured and stored as picture.jpg
+**Success:**: Image is captured and stored as picture.jpg
 
 If using nvm to select node version you must use:
 
     $ sudo env "PATH=$PATH" node test.camera.js 
 
-T
 
 ## Test the microphone
 
-To use pulseaudio utils for recording:
+Test using pulseaudio utils:
 
     $ parecord recording.wav
 
@@ -209,7 +216,7 @@ If using nvm to select node version you must use:
 
     $ sudo node test.speaker.js 
 
--> Should play an audio file.
+**Success:**: Should play an audio file.
 
 If using nvm to select node version you must use:
 
