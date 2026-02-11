@@ -22,7 +22,10 @@ This recipe requires a TJBot with a microphone, a speaker, a LED, a servo arm an
 ## Build and Run
 
 ### Bootstrap
-First, make sure you have configured your Raspberry Pi for TJBot by following the [bootstrap instructions](https://github.com/ibmtjbot/tjbot/tree/master/bootstrap).
+First, make sure you have configured your Raspberry Pi for Lucy by running the [bootstrap script](https://github.com/MarzlS/lucy/blob/master/bootstrap/bootstrap.sh).
+
+### Testing and Troubleshooting
+Testing and troublehooting instructions can be found here: [Troubleshooting.md] (Troubleshooting.md)
 
 ### Using Audio and the LED together
 To use the LED and Audio in paralled I use an external USB sound card.
