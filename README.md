@@ -27,21 +27,6 @@ First, make sure you have configured your Raspberry Pi for Lucy by running the [
 ### Testing and Troubleshooting
 Testing and troublehooting instructions can be found here: [Troubleshooting.md](Troubleshooting.md)
 
-### Using Audio and the LED together
-To use the LED and Audio in paralled I use an external USB sound card.
-
-To get this up and running Audio must be blacklisted, but not all modules!
-
-After bootstrap script has been run enter
-
-    $ sudo vi /etc/modprobe.d/tjbot-blacklist-snd.conf
-
-and delete the last line:
-
-    $ blacklist snd
-
-Save the changes and restart the system.
-
 ### Dependencies and configuration
 
 Next, go to the `lucy` folder and install the dependencies.
