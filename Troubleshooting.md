@@ -51,14 +51,6 @@ Headjack may not be  blacklisted otherwise the USB Soundcard does not work.
 Delete blacklist:
     $ rm /etc/modprobe.d/*-blacklist-snd.conf
 
-Start Pulseaudio (to be evaluaed if still necessary with Trixie OS):
-
-    $ pulseaudio -D
-
-or
-
-    $ pulseaudio --start
-
 Speaker Config using the USB soundcard:
 
 var tj = new TJBot(['speaker'], {log: {level: 'debug'}, speak: {speakerDeviceId: "plughw:1,0"}}, {});
@@ -83,8 +75,18 @@ The legacy camera stack has been replaced by libcamera.
 To fix this we create a this script to simulate raspistill (old version of rpicam-still) for TJBot and Lucybot:
 
 Check your configuration file:
-sudo nano /boot/firmware/config.txt
-leave camera_auto_detect=1 and remove start_x=1 and gpu_mem=128 from boot/firmware/config.txt
+
+    $ sudo nano /boot/firmware/config.txt
+
+- Set `camera_auto_detect` to `0`.
+- Remove `start_x=1` and `gpu_mem=128` if present.
+- Add `dtoverlay=ov5647,rotation=180` to the `[all]` section to always do `--vflip` for the ov5647 camera.
+
+```
+[all]
+# Always do --vflip for the ov5647 camera
+dtoverlay=ov5647,rotation=180
+```
 
 To test the camera use stand alone:
 
@@ -168,6 +170,12 @@ Fix (recommended): downgrade Node, use Node 18 LTS (most stable for pigpio) or N
 
 ## Test the camera
 
+Native testing:
+
+    $ rpicam-hello
+
+Test using Lucy:
+
     $ sudo node test.camera.js
 
 -> Bild is captured and stored as picture.jpg
@@ -179,6 +187,16 @@ If using nvm to select node version you must use:
 T
 
 ## Test the microphone
+
+To use pulseaudio utils for recording:
+
+    $ parecord recording.wav
+
+then
+
+    $ paplay recording.wav
+
+Test using Lucy (needs SpeechToText service):
 
     $ sudo node test.mic.js 
 

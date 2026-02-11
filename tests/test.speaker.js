@@ -29,7 +29,7 @@ function confirm(behavior) {
 }
 
 const sound = '/usr/share/sounds/alsa/Front_Center.wav';
-const tjbot = new TJBot({ log: { level: 'silly' } });
+const tjbot = new TJBot({ log: { level: 'silly' }, speak: { language: 'en-US', speakerDeviceId: 'plughw:1,0'}});
 tjbot.initialize([TJBot.HARDWARE.SPEAKER]);
 await tjbot.play(sound);
 

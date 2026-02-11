@@ -153,8 +153,8 @@ fi
 
 #----install additional packages
 echo ""
-echo "Installing additional software packages (alsa, libasound2-dev, git, pigpio)"
-# apt-get install -y alsa-base alsa-utils libasound2-dev git pigpio
+echo "Installing additional software packages (alsa, libasound2-dev, git, pigpio, pulseaudio)"
+# apt-get install -y alsa-base alsa-utils libasound2-dev git pigpio pulseaudio
 apt-get install -y libasound2-dev git pigpio
 
 #----remove outdated apt packages
