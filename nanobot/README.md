@@ -202,12 +202,20 @@ sudo env "PATH=$PATH" node /home/pi/Desktop/lucy/tests/test.led.js
 Backup the nanobot workspace using:
 
 ```bash
-cp -rf /home/pi/.nanobot/workspace/ /home/pi/Desktop/lucy/nanobot/ 
+cp -rf /home/pi/.nanobot/workspace/ /home/pi/Desktop/lucy/nanobot/
+cp /home/pi/.nanobot/config.json  /home/pi/Desktop/lucy/nanobot/
+cp -rf /home/pi/.nanobot/cron/ /home/pi/Desktop/lucy/nanobot/
+
 cd /home/pi/Desktop/lucy
+
 git add *
 git commit -m "Commit message"
 git push
 ```
+
+The files `config.json` and all memory files in `workspace/memory` are not pushed to GIT as they can contain sensitive information.
+You need to backup these files manually!
+
 
 
 
