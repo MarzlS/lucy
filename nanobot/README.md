@@ -177,7 +177,27 @@ Show live messages:
 sudo journalctl -f | grep nanobot
 ```
 
-## Backup of nanobot workspace
+## Implement your own skills
+
+Bring up the interactive agent chat:
+
+```bash
+nanobot agent
+```
+
+Then describe the skill that you want, e.g.:
+
+```
+Hi Lucy, can you write yourself a skill for your aura. Using that skill you can e.g. 
+express your emotions by shining the LED build in your hardware in different colors. 
+Or you can even make disco and let the LED blink when you are super happy :-). 
+Can you write such a skill? As a start you can look at the node js script that can be started using 
+sudo env "PATH=$PATH" node /home/pi/Desktop/lucy/tests/test.led.js
+```
+
+## Backup
+
+### Backup of the nanobot workspace
 
 Backup the nanobot workspace using:
 
