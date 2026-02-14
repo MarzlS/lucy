@@ -1,8 +1,8 @@
 # Nanobot for Lucy
 
-## Repo
+## Repository
 
-Repository: https://github.com/HKUDS/nanobot
+Original nanobot repository: https://github.com/HKUDS/nanobot
 
 ## Prerequisites
 
@@ -177,7 +177,17 @@ Show live messages:
 sudo journalctl -f | grep nanobot
 ```
 
+## Backup of nanobot workspace
 
+Backup the nanobot workspace using:
+
+```bash
+cp -rf /home/pi/.nanobot/workspace/ /home/pi/Desktop/lucy/nanobot/ 
+cd /home/pi/Desktop/lucy
+git add *
+git commit -m "Commit message"
+git push
+```
 
 
 

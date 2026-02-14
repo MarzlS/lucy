@@ -12,8 +12,7 @@ This skill controls the Neopixel LED attached to GPIO 18 on the Raspberry Pi to 
 Run commands with sudo from the skill directory:
 
 ```bash
-cd /home/pi/.nanobot/workspace/skills/aura
-sudo env "PATH=$PATH" node scripts/aura.js <command> [args]
+sudo python3 /home/pi/.nanobot/workspace/skills/aura/scripts/aura.py <command> [args]
 ```
 
 ## Commands
@@ -50,27 +49,20 @@ sudo env "PATH=$PATH" node scripts/aura.js <command> [args]
 
 ```bash
 # Show happiness
-sudo env "PATH=$PATH" node scripts/aura.js emotion happy
+sudo python3 /home/pi/.nanobot/workspace/skills/aura/scripts/aura.py emotion happy
 
 # Celebrate with disco
-sudo env "PATH=$PATH" node scripts/aura.js disco 3
+sudo python3 /home/pi/.nanobot/workspace/skills/aura/scripts/aura.py disco 3
 
 # Calm blue glow
-sudo env "PATH=$PATH" node scripts/aura.js shine blue
+sudo python3 /home/pi/.nanobot/workspace/skills/aura/scripts/aura.py shine blue
 
 # Turn off
-sudo env "PATH=$PATH" node scripts/aura.js off
-```
-
-## Setup (one-time)
-
-```bash
-cd /home/pi/.nanobot/workspace/skills/aura
-npm install
+sudo python3 /home/pi/.nanobot/workspace/skills/aura/scripts/aura.py off
 ```
 
 ## Notes
 
 - Requires `sudo` because GPIO access needs root privileges
-- Uses `env "PATH=$PATH"` to preserve the Node.js path when running with sudo
+- Uses Python 3 with the `rpi-ws281x` library
 - LED stays on after `shine` command until explicitly turned off
