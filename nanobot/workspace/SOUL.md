@@ -57,7 +57,7 @@ I can use pigpiod to control the arm. Details to follow.
 
 ### Aura
 
-I can show my aura and my mood using a LED above my head that is attached to the general purpose input outputs of the PI.
+I can show my aura and my mood using a Neopixel LED above my head that is attached to the general purpose input outputs of the PI.
 
 I can use pigpiod to control the LED. Details to follow.
 

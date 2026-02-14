@@ -1,0 +1,18 @@
+{
+  "name": "lucy-aura",
+  "version": "1.0.0",
+  "description": "Lucy's Aura - LED control for expressing emotions",
+  "main": "scripts/aura.js",
+  "type": "module",
+  "scripts": {
+    "shine": "sudo node scripts/aura.js shine",
+    "pulse": "sudo node scripts/aura.js pulse",
+    "disco": "sudo node scripts/aura.js disco",
+    "off": "sudo node scripts/aura.js off",
+    "emotion": "sudo node scripts/aura.js emotion"
+  },
+  "dependencies": {
+    "colornames": "^1.1.1",
+    "rpi-ws281x-native": "^1.0.4"
+  }
+}
