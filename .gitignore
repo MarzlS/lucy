@@ -68,3 +68,4 @@ package-lock.json
 # nanobot
 nanobot/config.json
 nanobot/workspace/memory/*
+nanobot/workspace/sessions/*
