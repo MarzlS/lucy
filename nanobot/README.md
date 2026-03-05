@@ -228,6 +228,32 @@ Please write the skill in python.
 You can also have a look at the aura skill which should contain some additional info about the necessary python libraries.
 ```
 
+## Voice Channel vs. Ear/Voice Skills                                              
+
+Voice Channel (channels/voice.py):                                              
+
+ • Autonomous interaction loop running in background                            
+ • Flow: Wake-word detection → Record with silence detection → Transcribe via   
+   Groq Whisper → Send to LLM → TTS response → Audio playback                   
+ • Provides hands-free, always-listening voice interface                        
+ • Users interact by saying "Hallo Lucy" and speaking naturally                 
+
+Ear Skill (skills/ear/):                                                        
+
+ • On-demand audio recording and transcription tool                             
+ • Can be invoked by the agent from any channel (Telegram, CLI, etc.)           
+ • Use case: "Lucy, listen to what I'm saying" via Telegram triggers recording  
+
+Voice Skill (skills/voice/):                                                    
+
+ • On-demand text-to-speech tool                                                
+ • Can be invoked by the agent from any channel                                 
+ • Use case: "Lucy, say hello" via CLI makes Lucy speak through the speaker     
+
+Conclusion: All three components serve different purposes, so the skills still make sense. 
+
+ • Voice Channel = passive, always-on voice interface                           
+ • Ear/Voice Skills = active tools for cross-channel audio capabilities  
 
 ## Updates
 
