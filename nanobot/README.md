@@ -66,15 +66,60 @@ sudo systemctl enable pigpiod
 uv tool install --python 3.12 nanobot-ai
 ```
 
-### Installation for Development
+### Installation for Development Setup (Git + uv)
+
+If you want to run nanobot directly from the Git repository while using uv's managed dependencies, you can configure the systemd service to use `PYTHONPATH`. This is useful for development: you can modify the code in the Git repo and the changes take effect immediately after a service restart — no reinstallation needed.
+
+**1. Install nanobot with uv** (this sets up the virtual environment with all dependencies):
+
+```bash
+uv tool install nanobot-ai
+```
+
+**2. Clone the repository:**
 
 ```bash
 git clone https://github.com/HKUDS/nanobot.git
 cd nanobot
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -e .
 ```
+
+**3. Update the systemd service** to use the Git repo as the Python source:
+
+Edit `~/.config/systemd/user/nanobot-gateway.service`:
+
+```ini
+[Unit]
+Description=Nanobot Gateway
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+# Use Git repo as primary source, uv venv for dependencies
+Environment="PYTHONPATH=/path/to/your/nanobot"
+ExecStart=/home/YOUR_USER/.local/share/uv/tools/nanobot-ai/bin/python3 -m nanobot gateway
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=default.target
+```
+
+Replace `/path/to/your/nanobot` with the actual path to your cloned repository, and `YOUR_USER` with your username.
+
+**4. Reload and restart:**
+
+```bash
+systemctl --user daemon-reload
+systemctl --user restart nanobot-gateway
+```
+
+Now the gateway runs your local Git code with uv's dependencies. To update:
+
+- **Your changes:** Edit files in the Git repo, then `systemctl --user restart nanobot-gateway`
+- **Upstream changes:** `git pull` (or merge), then restart the service
+
+> **Tip:** If you add custom channels or providers that require additional system packages (e.g. `pvporcupine` for wake-word detection), you may need to enable system site-packages in the uv venv. Edit `~/.local/share/uv/tools/nanobot-ai/pyvenv.cfg` and set `include-system-site-packages = true`.
+
 
 
 ## Onboarding
@@ -262,7 +307,13 @@ When installed using uv udpate to the latest version using:
 ```bash
 uv tool update --python 3.12 nanobot-ai
 ```
-
+When running nanobot from the git-repo, the workflow for updates is:                                                           
+                                                                                
+```cd /home/pi/Desktop/nanobot                                                    
+ git fetch upstream                                                             
+ git merge upstream/main                                                        
+ systemctl --user restart nanobot-gateway.service  
+```
 
 ## Backup
 
