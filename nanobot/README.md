@@ -44,6 +44,19 @@ Select the default installation (option 1).
 
 Restart terminal after install.
 
+### Install libffi
+
+```bash
+sudo apt update
+sudo apt install libffi-dev
+```
+### Autostart 
+
+The pigpiod deamon must run for the servo arm to operate. Autostart it using: 
+
+```bash
+sudo systemctl enable pigpiod
+```
 
 ## Installation
 
@@ -121,6 +134,10 @@ In ~/.nanobot/config.json:
 nanobot gateway
 ```
 
+**4. Groups**
+
+To add the bot to a telegram group, make it group admin so it can see all messages. Or disable group pricacy mode for the bot in telegram BotFather configuration.
+
 #### WhatsApp
 
 Requires **Node.js 20**.
@@ -177,6 +194,13 @@ Show live messages:
 sudo journalctl -f | grep nanobot
 ```
 
+As Lucy is now running as a user-service named nanobot-gateway.service you need to restart the service using this call after changing the configuration:
+
+```bash
+systemctl --user restart nanobot-gateway.service
+```
+
+
 ## Implement your own skills
 
 Bring up the interactive agent chat:
@@ -194,6 +218,25 @@ Or you can even make disco and let the LED blink when you are super happy :-).
 Can you write such a skill? As a start you can look at the node js script that can be started using 
 sudo env "PATH=$PATH" node /home/pi/Desktop/lucy/tests/test.led.js
 ```
+
+```
+Hi Lucy, can you write yourself a skill for your arm. Using that skill you can e.g. 
+wave hello or goodbye to the user. 
+Can you write such a skill? As a start you can look at the node js script that can be started using 
+sudo env "PATH=$PATH" node /home/pi/Desktop/lucy/tests/test.servo.js
+Please write the skill in python.
+You can also have a look at the aura skill which should contain some additional info about the necessary python libraries.
+```
+
+
+## Updates
+
+When installed using uv udpate to the latest version using:
+
+```bash
+uv tool update --python 3.12 nanobot-ai
+```
+
 
 ## Backup
 
