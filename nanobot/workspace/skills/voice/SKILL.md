@@ -1,6 +1,21 @@
+---
+name: voice
+description: "Speak text aloud via TTS. WICHTIG: NIEMALS im Voice-Channel verwenden - der hat bereits eingebaute TTS! Nur für Telegram, Discord, CLI und andere Text-Channels."
+---
+
 # Voice Skill
 
 Control Lucy's voice to speak text aloud using edge-tts (Microsoft Edge Text-to-Speech).
+
+## WICHTIG: Wann diesen Skill NICHT verwenden!
+
+**NIEMALS im Voice-Channel verwenden!** Der Voice-Channel hat bereits eingebaute TTS-Funktionalität. Wenn du dort zusätzlich diesen Skill aufrufst, wird alles doppelt gesprochen.
+
+Dieser Skill ist NUR für:
+- Telegram-Channel (wenn du dort sprechen willst)
+- Discord-Channel
+- CLI-Channel
+- Andere Text-basierte Channels
 
 ## Usage
 

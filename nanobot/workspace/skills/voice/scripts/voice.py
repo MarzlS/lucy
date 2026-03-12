@@ -15,6 +15,7 @@ Requires:
 
 import argparse
 import asyncio
+import json
 import os
 import subprocess
 import sys
@@ -22,8 +23,22 @@ import tempfile
 from pathlib import Path
 
 # Configuration
-DEFAULT_VOICE = os.environ.get("TTS_VOICE", "de-DE-SeraphinaMultilingualNeural")
+CONFIG_PATH = os.path.expanduser("~/.nanobot/config.json")
 EDGE_TTS_PATH = os.path.expanduser("~/.local/bin/edge-tts")
+
+def get_default_voice() -> str:
+    """Get the TTS voice from nanobot config.json."""
+    try:
+        with open(CONFIG_PATH, "r") as f:
+            config = json.load(f)
+        voice = config.get("channels", {}).get("voice", {}).get("ttsVoice")
+        if voice:
+            return voice
+    except (FileNotFoundError, json.JSONDecodeError, KeyError):
+        pass
+    return "de-DE-SeraphinaMultilingualNeural"
+
+DEFAULT_VOICE = get_default_voice()
 
 # Some good voice options:
 # German: de-DE-SeraphinaMultilingualNeural, de-DE-AmalaNeural, de-DE-KatjaNeural
@@ -106,7 +121,16 @@ def text_to_speech(text: str, voice: str = DEFAULT_VOICE, output_path: str | Non
 
 
 def say(text: str, voice: str = DEFAULT_VOICE, keep_audio: bool = False) -> bool:
-    """Convert text to speech and play it."""
+    """Convert text to speech and play it.
+    
+    NOTE: If NANOBOT_VOICE_CHANNEL is set, this does nothing - the voice channel
+    has its own TTS and calling this skill would cause double audio output.
+    """
+    # Check if we're being called from the voice channel
+    if os.environ.get("NANOBOT_VOICE_CHANNEL"):
+        print("Skipping: Voice channel has built-in TTS, no need to use voice skill.")
+        return True
+    
     print(f"Speaking: {text[:50]}..." if len(text) > 50 else f"Speaking: {text}")
     
     audio_path = text_to_speech(text, voice)
