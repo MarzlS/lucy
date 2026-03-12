@@ -39,15 +39,15 @@ COLORS = {
     'blue': 0x0000FF,
     'yellow': 0xFFFF00,
     'orange': 0xFFA500,
-    'purple': 0x800080,
-    'pink': 0xFFC0CB,
+    'purple': 0xAD40FA,
+    'pink': 0x800080,
     'cyan': 0x00FFFF,
     'white': 0xFFFFFF,
     'gold': 0xFFD700,
     'royalblue': 0x4169E1,
     'palegreen': 0x98FB98,
-    'mediumpurple': 0x9370DB,
-    'deeppink': 0xFF1493,
+    'mediumpurple': 0xBC80FF,
+    'deeppink': 0xFF5CB8,
     'off': 0x000000,
     'on': 0xFFFFFF,
 }
@@ -106,7 +106,7 @@ def int_to_color(value):
     r = (value >> 16) & 0xFF
     g = (value >> 8) & 0xFF
     b = value & 0xFF
-    return Color(r, g, b)
+    return Color(g, r, b)
 
 
 def shine(color):
@@ -133,7 +133,7 @@ def pulse(color, duration=1.0):
         pr = int(r * brightness)
         pg = int(g * brightness)
         pb = int(b * brightness)
-        strip.setPixelColor(0, Color(pr, pg, pb))
+        strip.setPixelColor(0, Color(pg, pr, pb))
         strip.show()
         time.sleep(step_delay)
     
@@ -143,7 +143,7 @@ def pulse(color, duration=1.0):
         pr = int(r * brightness)
         pg = int(g * brightness)
         pb = int(b * brightness)
-        strip.setPixelColor(0, Color(pr, pg, pb))
+        strip.setPixelColor(0, Color(pg, pr, pb))
         strip.show()
         time.sleep(step_delay)
     
