@@ -265,9 +265,15 @@ nanobot gateway
 
 ## Autorun
 
-**4. Update the systemd service** to use the Git repo as the Python source:
+The gateway runs as a systemd **user service** that starts the nanobot from the local Git repo's own venv. This is equivalent to running manually:
 
-Edit `~/.config/systemd/user/nanobot-gateway.service`:
+```bash
+cd /home/pi/Desktop/nanobot
+source .venv/bin/activate
+nanobot gateway
+```
+
+**Service file** at `~/.config/systemd/user/nanobot-gateway.service`:
 
 ```ini
 [Unit]
@@ -276,9 +282,9 @@ After=network-online.target
 Wants=network-online.target
 
 [Service]
-# Use Git repo as primary source, uv venv for dependencies
-Environment="PYTHONPATH=/path/to/your/nanobot"
-ExecStart=/home/YOUR_USER/.local/share/uv/tools/nanobot-ai/bin/python3 -m nanobot gateway
+# Run gateway from the local Git repo using its own venv
+WorkingDirectory=/home/pi/Desktop/nanobot
+ExecStart=/home/pi/Desktop/nanobot/.venv/bin/nanobot gateway
 Restart=on-failure
 RestartSec=10
 
@@ -286,21 +292,20 @@ RestartSec=10
 WantedBy=default.target
 ```
 
-Replace `/path/to/your/nanobot` with the actual path to your cloned repository, and `YOUR_USER` with your username.
-
-**4. Reload and restart:**
+**Enable and start:**
 
 ```bash
 systemctl --user daemon-reload
-systemctl --user restart nanobot-gateway
+systemctl --user enable --now nanobot-gateway
 ```
 
-Now the gateway runs your local Git code with uv's dependencies. To update:
+Now the gateway runs the local Git code with the repo venv's dependencies. To update:
 
 - **Your changes:** Edit files in the Git repo, then `systemctl --user restart nanobot-gateway`
 - **Upstream changes:** `git pull` (or merge), then restart the service
 
-> **Tip:** If you add custom channels or providers that require additional system packages (e.g. `pvporcupine` for wake-word detection), you may need to enable system site-packages in the uv venv. Edit `~/.local/share/uv/tools/nanobot-ai/pyvenv.cfg` and set `include-system-site-packages = true`.
+> [!NOTE]
+> Stop any manually started gateway instance before enabling the service, otherwise two gateways would compete for the same config and channels.
 
 
 
