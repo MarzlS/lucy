@@ -12,11 +12,13 @@ Commands:
   disco [duration]           - Party mode! Random colors blinking
   off                        - Turn off the LED
   emotion <name>             - Show a predefined emotion
+  status <name>              - Show a predefined status
 
 Colors: red, green, blue, yellow, orange, purple, pink, cyan, white, or hex (#FF0000)
 Emotions: happy, sad, excited, calm, thinking, love, angry, surprised
+Status: idle, listening_wake_word, recording, thinking, speaking
 """
-
+        
 import sys
 import time
 import random
@@ -28,7 +30,7 @@ GPIO_PIN = 18
 NUM_LEDS = 1
 LED_FREQ_HZ = 800000
 LED_DMA = 10
-LED_BRIGHTNESS = 255
+LED_BRIGHTNESS = 30
 LED_INVERT = False
 LED_CHANNEL = 0
 
@@ -65,9 +67,20 @@ EMOTIONS = {
     'neutral': {'color': '#FFFFFF', 'mode': 'shine'},    # White
 }
 
-# Initialize the LED strip
-strip = PixelStrip(NUM_LEDS, GPIO_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL)
-strip.begin()
+# Initialize the LED strip with fallback for non‑hardware environments
+try:
+    strip = PixelStrip(NUM_LEDS, GPIO_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL)
+    strip.begin()
+except Exception as e:
+    # When running on a system without the required hardware (e.g., CI or test env),
+    # create a dummy object that mimics the needed API.
+    class _DummyStrip:
+        def setPixelColor(self, *args, **kwargs):
+            pass
+        def show(self):
+            pass
+    strip = _DummyStrip()
+    print(f"[Aura] Hardware init failed ({e}); using dummy LED strip for testing.")
 
 
 def normalize_color(color):
@@ -127,6 +140,10 @@ def pulse(color, duration=1.0):
     
     step_delay = duration / steps
     
+    # Turn off before pulse
+    strip.setPixelColor(0, Color(0, 0, 0))
+    strip.show()
+    
     # Fade in
     for i in range(steps // 2 + 1):
         brightness = i / (steps / 2)
@@ -146,7 +163,11 @@ def pulse(color, duration=1.0):
         strip.setPixelColor(0, Color(pg, pr, pb))
         strip.show()
         time.sleep(step_delay)
-    
+
+    # Turn off after pulse
+    strip.setPixelColor(0, Color(0, 0, 0))
+    strip.show()
+        
     print(f"LED pulsed: {color}")
 
 
@@ -208,18 +229,50 @@ signal.signal(signal.SIGINT, cleanup)
 signal.signal(signal.SIGTERM, cleanup)
 
 
+def handle_status(status: str):
+    """Map voice channel statuses to aura actions.
+    The voice channel will invoke this script with the status string as the first argument.
+    """
+    status_map = {
+        'idle': ('off', None),
+        'listening_wake_word': ('off', None),
+        'recording': ('shine', 'blue'),
+        'thinking': ('shine', 'orange'),
+        'speaking': ('shine', 'green'),
+    }
+    action_tuple = status_map.get(status)
+    if not action_tuple:
+        print(f"Unknown status: {status}. No aura change.")
+        return
+    action, param = action_tuple
+    if action == 'off':
+        off()
+    elif action == 'shine':
+        shine(param)
+    elif action == 'pulse':
+        pulse(param)
+    else:
+        print(f"Unhandled action {action} for status {status}")
+
+
 def main():
     args = sys.argv[1:]
     
     if not args:
         print("Usage: python3 aura.py <command> [options]")
-        print("Commands: shine, pulse, disco, off, emotion")
+        print("Commands: shine, pulse, disco, off, emotion, status")
         print("Example: python3 aura.py shine red")
         print("Example: python3 aura.py emotion happy")
         print("Example: python3 aura.py disco 5")
+        print("Example: python3 aura.py status listening_wake_word")
         sys.exit(1)
     
+    # If the first argument matches a known status, treat it as a status command.
+    known_statuses = {'idle', 'listening_wake_word', 'recording', 'thinking', 'speaking'}
     command = args[0].lower()
+    if command in known_statuses:
+        handle_status(command)
+        return
     
     try:
         if command == 'shine':
@@ -235,6 +288,8 @@ def main():
             off()
         elif command == 'emotion':
             show_emotion(args[1] if len(args) > 1 else 'neutral')
+        elif command == 'status':
+            handle_status(args[1].lower() if len(args) > 1 else 'idle')
         else:
             # Maybe it's a color directly
             shine(command)

@@ -3,6 +3,7 @@
 ## Repository
 
 Original nanobot repository: https://github.com/HKUDS/nanobot
+Our adjusted respository: https://github.com/norastreile/nanobot.git
 
 ## Prerequisites
 
@@ -60,77 +61,114 @@ sudo systemctl enable pigpiod
 
 ## Installation
 
-### Installation using uv
+### Installation using uv (non-development installations)
 
 ```bash
-uv tool install --python 3.12 nanobot-ai
+uv tool install --python 3.12 nanobot-ai (TODO: Adjust package name)
 ```
 
-### Installation for Development Setup (Git + uv)
+### Installation for Development Setup (Git)
 
-If you want to run nanobot directly from the Git repository while using uv's managed dependencies, you can configure the systemd service to use `PYTHONPATH`. This is useful for development: you can modify the code in the Git repo and the changes take effect immediately after a service restart — no reinstallation needed.
+If you want to run nanobot directly from the Git repository, you can configure the systemd service to use `PYTHONPATH`. This is useful for development: you can modify the code in the Git repo and the changes take effect immediately after a service restart — no reinstallation needed.
 
-**1. Install nanobot with uv** (this sets up the virtual environment with all dependencies):
-
-```bash
-uv tool install nanobot-ai
-```
-
-**2. Clone the repository:**
+**1. Clone the repository:**
 
 ```bash
-git clone https://github.com/HKUDS/nanobot.git
+git clone https://github.com/norastreile/nanobot.git
 cd nanobot
 ```
 
-**3. Update the systemd service** to use the Git repo as the Python source:
-
-Edit `~/.config/systemd/user/nanobot-gateway.service`:
-
-```ini
-[Unit]
-Description=Nanobot Gateway
-After=network-online.target
-Wants=network-online.target
-
-[Service]
-# Use Git repo as primary source, uv venv for dependencies
-Environment="PYTHONPATH=/path/to/your/nanobot"
-ExecStart=/home/YOUR_USER/.local/share/uv/tools/nanobot-ai/bin/python3 -m nanobot gateway
-Restart=on-failure
-RestartSec=10
-
-[Install]
-WantedBy=default.target
-```
-
-Replace `/path/to/your/nanobot` with the actual path to your cloned repository, and `YOUR_USER` with your username.
-
-**4. Reload and restart:**
+**2. Create and avtivate environment:**
 
 ```bash
-systemctl --user daemon-reload
-systemctl --user restart nanobot-gateway
+python -m venv .venv
+source .venv/bin/activate
 ```
 
-Now the gateway runs your local Git code with uv's dependencies. To update:
+**3. Install depencies:**
 
-- **Your changes:** Edit files in the Git repo, then `systemctl --user restart nanobot-gateway`
-- **Upstream changes:** `git pull` (or merge), then restart the service
+**Note:** We can not include dev depencies on our 32-bit PI, this will lead to a timeout error during install.
 
-> **Tip:** If you add custom channels or providers that require additional system packages (e.g. `pvporcupine` for wake-word detection), you may need to enable system site-packages in the uv venv. Edit `~/.local/share/uv/tools/nanobot-ai/pyvenv.cfg` and set `include-system-site-packages = true`.
+```bash
+pip install -e .
+```
 
+**4. Test installation:**
+
+```bash
+nanobot --version
+```
+
+## Running the Web UI
+
+**Important:** We will not build the web UI on the PI, but copy it over fron the development server!
+
+Our current Raspberry Pi 3 Model B Rev 1.2 (run `cat /proc/device-tree/model`) is still on a 32-bit OS
+and has memory issues with a 64-bit OS, thus we can not install bun there.
+
+Therefore we compile the web UI distribution files on an other 64-bit development system and copy them over to the PI.
+
+### Compile Web-UI on 64-bit development system
+
+**Important:** Run all this steps on a separate 64-bit development system.
+
+**1. Check if bun is installed:**
+
+```bash
+bun --version
+# Should show output: 1.x.y
+```
+
+If bun is not installed run:
+
+```bash
+sudo apt install unzip
+curl -fsSL https://bun.com/install | bash
+```
+**2. Compile the Web UI:**
+
+```bash
+cd webui
+bun run build
+cd ..
+```
+
+**3. Copy Web UI to PI:**
+
+Adjust host name and path on PI according to your system.
+Copy operation  must be run in `/nanobot` dir.
+
+```bash
+rsync -av --delete nanobot/web/dist/ \
+  pi@lucy:/home/pi/Desktop/nanobot/nanobot/web/dist/
+```
+
+### Starting the web ui
+
+**Important**: Requires **Node.js 20**!
+
+Back on the PI run:
+
+```bash
+export NANOBOT_SKIP_WEBUI_BUILD=1
+nanobot webui
+```
+The browser should automatically open at [Nanobot Web UI Chat](http://127.0.0.1:8765).
+
+Add the export to .bashrc to keep it after next restart.
+- Open the file by running `nano ~/.bashrc` .
+- Scroll all the way to the bottom of the file.
+- Paste this lines: 
+   ```
+   # Nanobot environment settings
+   export NANOBOT_SKIP_WEBUI_BUILD=1
+   ```
+- Press `Ctrl + O` then Enter to save, then `Ctrl + X` to exit the editor.
 
 
 ## Onboarding
 
-### Run onboard
-
-```bash
-nanobot onboard
-```
-
-This will create:
+First start of the web UI will create (if they not yet exist):
 - config at /home/pi/.nanobot/config.json
 - workspace at /home/pi/.nanobot/workspace
 - ... at /home/pi/.nanobot/workspace/AGENTS.md
@@ -138,6 +176,7 @@ This will create:
 - ... at /home/pi/.nanobot/workspace/USER.md
 - ... at /home/pi/.nanobot/workspace/memory/MEMORY.md
 - ... at /home/pi/.nanobot/workspace/memory/HISTORY.md
+
 
 ### Initial configuration
 
@@ -221,6 +260,50 @@ nanobot channels login
 # Terminal 2
 nanobot gateway
 ```
+
+----------------------------------
+
+## Autorun
+
+**4. Update the systemd service** to use the Git repo as the Python source:
+
+Edit `~/.config/systemd/user/nanobot-gateway.service`:
+
+```ini
+[Unit]
+Description=Nanobot Gateway
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+# Use Git repo as primary source, uv venv for dependencies
+Environment="PYTHONPATH=/path/to/your/nanobot"
+ExecStart=/home/YOUR_USER/.local/share/uv/tools/nanobot-ai/bin/python3 -m nanobot gateway
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=default.target
+```
+
+Replace `/path/to/your/nanobot` with the actual path to your cloned repository, and `YOUR_USER` with your username.
+
+**4. Reload and restart:**
+
+```bash
+systemctl --user daemon-reload
+systemctl --user restart nanobot-gateway
+```
+
+Now the gateway runs your local Git code with uv's dependencies. To update:
+
+- **Your changes:** Edit files in the Git repo, then `systemctl --user restart nanobot-gateway`
+- **Upstream changes:** `git pull` (or merge), then restart the service
+
+> **Tip:** If you add custom channels or providers that require additional system packages (e.g. `pvporcupine` for wake-word detection), you may need to enable system site-packages in the uv venv. Edit `~/.local/share/uv/tools/nanobot-ai/pyvenv.cfg` and set `include-system-site-packages = true`.
+
+
+
 
 ### Autostart after reboot
 
@@ -309,11 +392,35 @@ uv tool update --python 3.12 nanobot-ai
 ```
 When running nanobot from the git-repo, the workflow for updates is:                                                           
                                                                                 
-```cd /home/pi/Desktop/nanobot                                                    
- git fetch upstream                                                             
- git merge upstream/main                                                        
- systemctl --user restart nanobot-gateway.service  
 ```
+systemctl --user stop nanobot-gateway.service  
+cd /home/pi/Desktop/nanobot                                                    
+git pull
+source .venv/bin/activate                                                     
+pip install -e .
+nanobot --version
+```
+
+
+On the 64-Bit System we use to build the web UI:
+
+```
+git checkout main
+git fetch upstream                                                             
+git merge upstream/main
+uv sync --all-extras --dev
+cd webui
+bun install
+```
+
+Build the web UI and copy it to the PI.
+
+After copying the web UI start the nanobot service:
+
+```
+systemctl --user start nanobot-gateway.service  
+```
+
 
 ## Backup
 
@@ -335,10 +442,4 @@ git push
 
 The files `config.json` and all memory files in `workspace/memory` are not pushed to GIT as they can contain sensitive information.
 You need to backup these files manually!
-
-
-
-
-
-
 

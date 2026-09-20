@@ -66,3 +66,11 @@ sudo python3 /home/pi/.nanobot/workspace/skills/aura/scripts/aura.py off
 - Requires `sudo` because GPIO access needs root privileges
 - Uses Python 3 with the `rpi-ws281x` library
 - LED stays on after `shine` command until explicitly turned off
+
+
+| `status <status>` | React to voice channel status (idle, listening_wake_word, recording, thinking, speaking) | `status listening_wake_word` |
+
+```bash
+# React to voice channel status (e.g., listening_wake_word)
+sudo python3 /home/pi/.nanobot/workspace/skills/aura/scripts/aura.py status listening_wake_word
+```
